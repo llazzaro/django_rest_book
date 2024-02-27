@@ -8,8 +8,7 @@
 #   with-sources: false
 
 -e file:.
-asgiref==3.7.2
-django==5.0.2
-djangorestframework==3.14.0
-pytz==2024.1
+asgiref==3.8.1
+django==5.0.3
+djangorestframework==3.15.1
 sqlparse==0.4.4
