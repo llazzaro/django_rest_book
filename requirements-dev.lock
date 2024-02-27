@@ -44,6 +44,7 @@ pytest-django==4.8.0
 python-dateutil==2.9.0.post0
 ruff==0.3.4
 six==1.16.0
+pytz==2024.1
 sqlparse==0.4.4
 stack-data==0.6.3
 traitlets==5.14.2
