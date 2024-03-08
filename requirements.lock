@@ -11,4 +11,8 @@
 asgiref==3.8.1
 django==5.0.3
 djangorestframework==3.15.1
+factory-boy==3.3.0
+faker==24.4.0
+python-dateutil==2.9.0.post0
+six==1.16.0
 sqlparse==0.4.4

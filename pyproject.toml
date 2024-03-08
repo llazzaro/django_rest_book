@@ -8,6 +8,7 @@ authors = [
 dependencies = [
     "django>=5.0.2",
     "djangorestframework>=3.14.0",
+    "factory-boy>=3.3.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"
@@ -31,6 +32,7 @@ dev-dependencies = [
     "ruff>=0.3.4",
     "django-stub>=0.1",
     "django-stubs>=4.2.7",
+    "ipdb>=0.13.13",
 ]
 
 [tool.hatch.metadata]

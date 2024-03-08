@@ -1,5 +1,7 @@
-from factory import DjangoModelFactory, Faker
-from .models import Movie
+from factory import Faker
+from factory.django import DjangoModelFactory
+
+from movies.models import Movie
 
 
 class MovieFactory(DjangoModelFactory):
