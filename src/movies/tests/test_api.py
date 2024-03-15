@@ -1,3 +1,4 @@
+import json
 import pytest
 from django.urls import reverse
 from rest_framework import status
@@ -11,7 +12,7 @@ from .factories import (
 @pytest.mark.django_db
 def test_create_movie(client):
     url = reverse("movies:movie-api")
-    data = {"title": "A New Hope", "genres": ["Sci-Fi", "Adventure"]}
+    data = {"title": "A New Hope", "genres": json.dumps(["Sci-Fi", "Adventure"])}
 
     response = client.post(url, data=data)
 
