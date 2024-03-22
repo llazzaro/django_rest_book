@@ -10,6 +10,7 @@
 -e file:.
 asgiref==3.8.1
 django==5.0.3
+django-extensions==3.2.3
 djangorestframework==3.15.1
 factory-boy==3.3.0
 faker==24.4.0

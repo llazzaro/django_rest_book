@@ -1,11 +1,11 @@
 import pytest
 
-from movies.serializers import MovieSerializer
 from movies.models import Movie
+from movies.serializers import MovieSerializer
 
 
 @pytest.mark.django_db
-def test_valid_movie_serializer():
+def test_valid_movie_serializer() -> None:
     # Given valid movie data
     valid_data = {"title": "Inception", "genres": ["Action", "Sci-Fi"]}
 
@@ -26,7 +26,7 @@ def test_valid_movie_serializer():
 
 
 @pytest.mark.django_db
-def test_invalid_movie_serializer():
+def test_invalid_movie_serializer() -> None:
     # Given invalid movie data (missing required "title" field)
     invalid_data = {"genres": ["Action", "Sci-Fi"]}
 
@@ -41,7 +41,7 @@ def test_invalid_movie_serializer():
 
 
 @pytest.mark.django_db
-def test_serialize_movie_instance():
+def test_serialize_movie_instance() -> None:
     # Given a movie instance
     movie = Movie.objects.create(title="Inception", genres=["Action", "Sci-Fi"])
 
