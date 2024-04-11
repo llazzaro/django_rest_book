@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from typing import Any
 
+from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from rest_framework import generics, status
 from rest_framework.request import Request
@@ -9,6 +10,8 @@ from rest_framework.views import APIView
 
 from movies.models import Movie
 from movies.services import add_preference, add_watch_history
+from movies.tasks import process_file
+from movies.utils import temporary_file
 
 from .serializers import (
     AddPreferenceSerializer,
@@ -71,16 +74,6 @@ class WatchHistoryView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@contextmanager
-def temporary_file(uploaded_file):
-    try:
-        file_name = default_storage.save(uploaded_file.name, uploaded_file)
-        file_path = default_storage.path(file_name)
-        yield file_path
-    finally:
-        default_storage.delete(file_name)
-
-
 class GeneralUploadView(APIView):
     def post(self, request, *args: Any, **kwargs: Any) -> Response:
         serializer = GeneralFileUploadSerializer(data=request.data)
@@ -89,11 +82,11 @@ class GeneralUploadView(APIView):
             file_type = uploaded_file.content_type
 
             with temporary_file(uploaded_file) as file_path:
-                processor = FileProcessor()
-                movies_processed = processor.process(file_path, file_type)
+                # Celery call using delay
+                process_file.delay(file_path, file_type)
                 return Response(
-                    {"message": f"{movies_processed} movies processed successfully."},
-                    status=status.HTTP_201_CREATED,
+                    {"message": f"Your file is being processed."},
+                    status=status.HTTP_202_ACCEPTED,
                 )
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
