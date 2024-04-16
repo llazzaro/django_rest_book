@@ -2,7 +2,7 @@ import csv
 import datetime
 import json
 from collections import defaultdict
-from typing import Any, Callable, Dict, Tuple
+from typing import IO, Any, Callable, Dict, Tuple
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -114,24 +114,22 @@ def create_or_update_movie(
     return movie, created
 
 
-def parse_csv(file_path: str) -> int:
+def parse_csv(file: IO[Any]) -> int:
     movies_processed = 0
-    with open(file_path, encoding="utf-8") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            create_or_update_movie(**row)
-            movies_processed += 1
-    return movies_processed
+    reader = csv.DictReader(file)
+    for row in reader:
+        create_or_update_movie(**row)
+        movies_processed += 1
+        return movies_processed
 
 
-def parse_json(file_path: str) -> int:
+def parse_json(file: IO[Any]) -> int:
     movies_processed = 0
-    with open(file_path, encoding="utf-8") as file:
-        data = json.load(file)
-        for item in data:
-            create_or_update_movie(**item)
-            movies_processed += 1
-    return movies_processed
+    data = json.load(file)
+    for item in data:
+        create_or_update_movie(**item)
+        movies_processed += 1
+        return movies_processed
 
 
 class FileProcessor:
