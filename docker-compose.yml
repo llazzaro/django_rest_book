@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+    redis:
+        image: redis:alpine
+        ports:
+            - 6379:6379
+
+    minio:
+      image: minio/minio
+      volumes:
+        - minio_data:/data
+      ports:
+        - "9000:9000"
+        - "9001:9001"
+      command: server /data --console-address ":9001"
+      environment:
+        MINIO_ACCESS_KEY: minioadmin
+        MINIO_SECRET_KEY: minioadmin
+        MINIO_CONSOLE_LOG: "on"
+        MINIO_LOG_LEVEL: "DEBUG"
+
+    minio-setup:
+      image: minio/mc
+      depends_on:
+       - minio
+      entrypoint: >
+        /bin/sh -c "
+        /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
+        /usr/bin/mc rm -r --force myminio/test-bucket;
+        /usr/bin/mc mb myminio/test-bucket;
+        /usr/bin/mc policy download myminio/test-bucket;
+        exit 0;
+        "
+
+volumes:
+  minio_data:
