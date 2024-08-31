@@ -5,6 +5,7 @@ from movies.api import (
     GeneralUploadView,
     MovieDetailAPIView,
     MovieListCreateAPIView,
+    MovieRecommendationAPIView,
     UserPreferencesView,
     WatchHistoryView,
 )
@@ -26,4 +27,9 @@ urlpatterns = [
         name="user-watch-history",
     ),
     path("upload/", GeneralUploadView.as_view(), name="file-upload"),
+    path(
+        "recommendations/",
+        MovieRecommendationAPIView.as_view(),
+        name="movie_recommendations",
+    ),
 ]

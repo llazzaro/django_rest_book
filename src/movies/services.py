@@ -1,6 +1,7 @@
 import csv
 import datetime
 import json
+import re
 from collections import defaultdict
 from typing import IO, Any, Callable, Dict, Tuple
 
@@ -8,6 +9,9 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
 
 from movies.models import UserMoviePreferences
 from movies.serializers import PreferencesSerializer
@@ -86,6 +90,7 @@ def create_or_update_movie(
     title: str,
     genres: list[str],
     country: str | None = None,
+    actors: list[str] | None = None,
     extra_data: dict[Any, Any] | None = None,
     release_year: int | None = None,
 ) -> Tuple[Movie, bool]:
@@ -100,7 +105,7 @@ def create_or_update_movie(
         raise ValidationError(
             "The release year must be between 1888 and the current year."
         )
-
+    extra_data["actors"] = actors
     # Attempt to update an existing movie or create a new one
     movie, created = Movie.objects.update_or_create(
         title=title,
@@ -114,13 +119,74 @@ def create_or_update_movie(
     return movie, created
 
 
+# Function to detect strings starting with 'Q' followed by digits
+def detect_q_strings(text: str) -> list:
+    """
+    Detects strings that start with 'Q' followed by digits, useful for cleaning specific formats.
+    """
+    pattern = r"Q\d+"
+    return re.findall(pattern, text)
+
+
+# Define a function for cleaning text data
+def clean_text(text: str) -> str:
+    """
+    Cleans up the text data by removing punctuation, converting to lowercase,
+    removing stopwords, and lemmatizing the text.
+    """
+    # Convert text to lowercase
+    text = text.lower()
+
+    # Remove any non-alphanumeric characters, keeping words and digits
+    text = re.sub(r"[^a-zA-Z0-9\s]", "", text)
+
+    # Tokenize the text into words
+    words = word_tokenize(text)
+
+    # Remove stopwords
+    stop_words = set(stopwords.words("english"))
+    words = [word for word in words if word not in stop_words]
+
+    # Initialize lemmatizer and lemmatize the words
+    lemmatizer = WordNetLemmatizer()
+    words = [lemmatizer.lemmatize(word) for word in words]
+
+    # Join words back into a cleaned string
+    return " ".join(words).strip()
+
+
 def parse_csv(file: IO[Any]) -> int:
     movies_processed = 0
     reader = csv.DictReader(file)
     for row in reader:
+        extra_data = row.pop("extra_data").replace("'", '"')
+        try:
+            extrada_data_dict = json.loads(extra_data)
+        except json.decoder.JSONDecodeError:
+            extrada_data_dict = {}
+        row["extra_data"] = extrada_data_dict
+        row["extra_data"]["actors"] = row["actors"].split()
+        try:
+            row["release_year"] = int(row["release_year"])
+        except ValueError:
+            continue
+
+        # Detect any 'Q' strings in the title and genres
+        if detect_q_strings(row["title"]):
+            print(f"Detected 'Q' string in title: {row['title']}")
+            continue
+        if detect_q_strings(",".join(row["genres"])):
+            print(f"Detected 'Q' string in genres: {row['genres']}")
+
+        # Clean the fields before passing to movie creation
+
+        row["title"] = clean_text(row["title"])
+        row["genres"] = [clean_text(genre) for genre in row["genres"].split(",")]
+        row["country"] = clean_text(row["country"])
+
         create_or_update_movie(**row)
         movies_processed += 1
-        return movies_processed
+    return movies_processed
 
 
 def parse_json(file: IO[Any]) -> int:
@@ -129,7 +195,7 @@ def parse_json(file: IO[Any]) -> int:
     for item in data:
         create_or_update_movie(**item)
         movies_processed += 1
-        return movies_processed
+    return movies_processed
 
 
 class FileProcessor:
