@@ -4,6 +4,7 @@ from typing import Any, Optional
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import generics, status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -27,6 +28,18 @@ from .services import user_preferences, user_watch_history
 
 
 # For listing all movies and creating a new movie
+@extend_schema(
+    summary="Retrieve all movies",
+    description="Returns a paginated list of movies available in the system. Use filters and pagination parameters for large datasets.",
+    responses={
+        200: MovieSerializer(many=True),  # Response schema when successful
+    },
+    parameters=[
+        OpenApiParameter("page", int, description="Page number for pagination"),
+        OpenApiParameter("size", int, description="Page size for pagination"),
+    ],
+    methods=["GET"],  # Explicitly document GET
+)
 class MovieListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated, CustomDjangoModelPermissions)
     queryset = Movie.objects.all().order_by("id")

@@ -18,6 +18,9 @@ asgiref==3.8.1
     # via django-cors-headers
 asttokens==2.4.1
     # via stack-data
+attrs==24.2.0
+    # via jsonschema
+    # via referencing
 billiard==4.2.0
     # via celery
 black==24.3.0
@@ -56,6 +59,7 @@ django==5.0.3
     # via django-stubs-ext
     # via djangorestframework
     # via djangorestframework-simplejwt
+    # via drf-spectacular
     # via recommendation-system
 django-cors-headers==4.4.0
     # via recommendation-system
@@ -69,8 +73,11 @@ django-stubs-ext==4.2.7
     # via django-stubs
 djangorestframework==3.15.1
     # via djangorestframework-simplejwt
+    # via drf-spectacular
     # via recommendation-system
 djangorestframework-simplejwt==5.3.1
+    # via recommendation-system
+drf-spectacular==0.27.2
     # via recommendation-system
 executing==2.0.1
     # via stack-data
@@ -80,6 +87,8 @@ faker==24.4.0
     # via factory-boy
 idna==3.6
     # via requests
+inflection==0.5.1
+    # via drf-spectacular
 iniconfig==2.0.0
     # via pytest
 ipdb==0.13.13
@@ -97,6 +106,10 @@ joblib==1.4.2
     # via nltk
     # via scikit-learn
     # via scikit-surprise
+jsonschema==4.23.0
+    # via drf-spectacular
+jsonschema-specifications==2023.12.1
+    # via jsonschema
 kombu==5.3.7
     # via celery
 matplotlib-inline==0.1.6
@@ -156,15 +169,23 @@ python-dateutil==2.9.0.post0
     # via pandas
 pytz==2024.1
     # via pandas
+pyyaml==6.0.2
+    # via drf-spectacular
 rdflib==7.0.0
     # via sparqlwrapper
 redis==5.0.3
     # via recommendation-system
+referencing==0.35.1
+    # via jsonschema
+    # via jsonschema-specifications
 regex==2024.7.24
     # via nltk
 requests==2.31.0
 rpdb==0.1.6
     # via recommendation-system
+rpds-py==0.20.0
+    # via jsonschema
+    # via referencing
 ruff==0.3.4
 s3transfer==0.10.1
     # via boto3
@@ -207,6 +228,8 @@ typing-extensions==4.10.0
 tzdata==2024.1
     # via celery
     # via pandas
+uritemplate==4.1.1
+    # via drf-spectacular
 urllib3==2.2.1
     # via botocore
     # via requests
