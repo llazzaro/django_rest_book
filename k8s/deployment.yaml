@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendation-system-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: recommendation-system-app
+  template:
+    metadata:
+      labels:
+        app: recommendation-system-app
+    spec:
+      containers:
+      - name: recommendation-system-app
+        image: llazzaro/django_rest_book
+        envFrom:
+          - configMapRef:
+              name: recommendation-system-settings
+          - secretRef:
+              name: recommendation-system-secrets
+        readinessProbe:
+          httpGet:
+            path: /health/readiness/
+            port: 8000
+            httpHeaders:
+              - name: Host
+                value: "localhost"
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health/liveness
+            port: 8000
+            httpHeaders:
+              - name: Host
+                value: "localhost"
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        ports:
+        - containerPort: 8000

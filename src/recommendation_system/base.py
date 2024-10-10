@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "api_auth",
     "corsheaders",
     "drf_spectacular",
+    "health",
 ]
 
 MIDDLEWARE = [

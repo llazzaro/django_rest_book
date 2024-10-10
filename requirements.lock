@@ -66,6 +66,8 @@ factory-boy==3.3.0
     # via recommendation-system
 faker==24.4.0
     # via factory-boy
+gunicorn==23.0.0
+    # via recommendation-system
 inflection==0.5.1
     # via drf-spectacular
 isodate==0.6.1
@@ -90,6 +92,8 @@ numpy==2.1.0
     # via scikit-learn
     # via scikit-surprise
     # via scipy
+packaging==24.1
+    # via gunicorn
 pandas==2.2.2
     # via recommendation-system
 prompt-toolkit==3.0.43

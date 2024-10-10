@@ -85,6 +85,8 @@ factory-boy==3.3.0
     # via recommendation-system
 faker==24.4.0
     # via factory-boy
+gunicorn==23.0.0
+    # via recommendation-system
 idna==3.6
     # via requests
 inflection==0.5.1
@@ -127,6 +129,7 @@ numpy==2.1.0
     # via scipy
 packaging==24.0
     # via black
+    # via gunicorn
     # via pytest
 pandas==2.2.2
     # via recommendation-system
